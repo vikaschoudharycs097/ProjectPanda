@@ -1,2 +1,2 @@
 # ProjectPanda
-A advanced C++ IDE with CLI and GUI flavour
+An advanced C++ IDE with CLI and GUI flavour
