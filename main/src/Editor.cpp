@@ -15,3 +15,8 @@ Editor::Editor(): fileName(""), fileContent(""), currMode(EditorMode::COMMAND) {
 Editor::Editor(const string& fileName): fileName(fileName), fileContent(""), 
         currMode(EditorMode::COMMAND) {
 }
+
+void Editor::editText(void) {
+    char ch;
+    while (read(STDIN_FILENO, &ch, 1) == 1);
+}

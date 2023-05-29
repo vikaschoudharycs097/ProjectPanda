@@ -22,6 +22,9 @@ private:
     string fileContent;
     EditorMode currMode;
 
+    // Private member functions
+    void editText(void);
+
 public:
     Editor();
     Editor(const string& fileName);
