@@ -16,6 +16,9 @@ Editor::Editor(const string& fileName): fileName(fileName), fileContent(""),
         currMode(EditorMode::COMMAND) {
 }
 
+Editor::~Editor() {
+}
+
 // Read text from STDIN in raw mode
 void Editor::editText(void) {
     char ch;

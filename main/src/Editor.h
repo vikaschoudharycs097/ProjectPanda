@@ -32,6 +32,7 @@ private:
 public:
     Editor();
     Editor(const string& fileName);
+    ~Editor();
     void updateMode(const EditorMode newMode);
     void start();  // Manages Editor's functionalities
 };
