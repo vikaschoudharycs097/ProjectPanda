@@ -28,11 +28,12 @@ private:
 
     // Static Constants
     const char ESC = (char) 27;
-    
+
 public:
     Editor();
     Editor(const string& fileName);
     void updateMode(const EditorMode newMode);
+    void start();  // Manages Editor's functionalities
 };
 
 #endif

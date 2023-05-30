@@ -26,3 +26,10 @@ void Editor::editText(void) {
 void Editor::updateMode(const EditorMode newMode) {
     currMode = newMode;
 }
+
+// Manages Editor's functionalities
+void Editor::start(void) {
+    // Testing: Update mode to Edit and call textEdit
+    updateMode(EditorMode::EDIT);
+    editText();
+}
