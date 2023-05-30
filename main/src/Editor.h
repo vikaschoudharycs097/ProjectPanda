@@ -18,6 +18,7 @@ enum class EditorMode {
 
 class Editor {
 private:
+    // Private data members
     string fileName;
     string fileContent;
     EditorMode currMode;
@@ -25,9 +26,13 @@ private:
     // Private member functions
     void editText(void);
 
+    // Static Constants
+    const char ESC = (char) 27;
+    
 public:
     Editor();
     Editor(const string& fileName);
+    void updateMode(const EditorMode newMode);
 };
 
 #endif
