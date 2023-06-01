@@ -22,7 +22,7 @@ Editor::~Editor() {
 // Read text from STDIN in raw mode
 void Editor::editText(void) {
     char ch;
-    while (read(STDIN_FILENO, &ch, 1) == 1);
+    while (read(STDIN_FILENO, &ch, 1) == 1 && ch != ESC);
 }
 
 // Update the mode of editor
