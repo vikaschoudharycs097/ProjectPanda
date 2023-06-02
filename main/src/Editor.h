@@ -25,6 +25,7 @@ private:
 
     // Private member functions
     void editText(void);
+    void enableRawMode(void);
 
     // Static Constants
     const char ESC = (char) 27;

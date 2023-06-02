@@ -7,7 +7,7 @@
 
 #include "Editor.h"
 #include <unistd.h>
-#include <cstdio>
+#include <termios.h>
 
 Editor::Editor(): fileName(""), fileContent(""), currMode(EditorMode::COMMAND) {
 }
@@ -22,6 +22,7 @@ Editor::~Editor() {
 // Read text from STDIN in raw mode
 void Editor::editText(void) {
     char ch;
+    enableRawMode();
     while (read(STDIN_FILENO, &ch, 1) == 1 && ch != ESC);
 }
 
@@ -35,4 +36,12 @@ void Editor::start(void) {
     // Testing: Update mode to Edit and call textEdit
     updateMode(EditorMode::EDIT);
     editText();
+}
+
+// Enable Raw mode
+void Editor::enableRawMode(void) {
+    struct termios mode;
+    tcgetattr(STDIN_FILENO, &mode);
+    mode.c_lflag &= ~(ECHO | ICANON);
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &mode);
 }
