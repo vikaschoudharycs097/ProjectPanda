@@ -10,10 +10,14 @@
 #include <termios.h>
 
 Editor::Editor(): fileName(""), fileContent(""), currMode(EditorMode::COMMAND) {
+    tcgetattr(STDIN_FILENO, &canonicalMode);
+    setRawMode();
 }
 
 Editor::Editor(const string& fileName): fileName(fileName), fileContent(""), 
         currMode(EditorMode::COMMAND) {
+    tcgetattr(STDIN_FILENO, &canonicalMode);
+    setRawMode();
 }
 
 Editor::~Editor() {
@@ -22,7 +26,11 @@ Editor::~Editor() {
 // Read text from STDIN in raw mode
 void Editor::editText(void) {
     char ch;
+
+    // Enable Raw mode
     enableRawMode();
+
+    // Read text
     while (read(STDIN_FILENO, &ch, 1) == 1 && ch != ESC);
 }
 
@@ -40,8 +48,11 @@ void Editor::start(void) {
 
 // Enable Raw mode
 void Editor::enableRawMode(void) {
-    struct termios mode;
-    tcgetattr(STDIN_FILENO, &mode);
-    mode.c_lflag &= ~(ECHO | ICANON);
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &mode);
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &rawMode);
+}
+
+// Set Raw mode
+void Editor::setRawMode(void) {
+    rawMode = canonicalMode;
+    rawMode.c_lflag &= ~(ECHO | ICANON);
 }

@@ -8,6 +8,7 @@
 #define EDITOR_H
 
 #include <string>
+#include <termios.h>
 using std::string;
 
 // Modes of editor(At a time one of these mode will be active)
@@ -22,10 +23,13 @@ private:
     string fileName;
     string fileContent;
     EditorMode currMode;
+    struct termios canonicalMode;
+    struct termios rawMode;
 
     // Private member functions
     void editText(void);
     void enableRawMode(void);
+    void setRawMode(void);
 
     // Static Constants
     const char ESC = (char) 27;
