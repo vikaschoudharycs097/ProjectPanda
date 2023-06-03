@@ -32,6 +32,9 @@ void Editor::editText(void) {
 
     // Read text
     while (read(STDIN_FILENO, &ch, 1) == 1 && ch != ESC);
+
+    // Disable Raw mode
+    disableRawMode();
 }
 
 // Update the mode of editor
@@ -49,6 +52,11 @@ void Editor::start(void) {
 // Enable Raw mode
 void Editor::enableRawMode(void) {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &rawMode);
+}
+
+// Disable Raw or Enable Canonical mode
+void Editor::disableRawMode(void) {
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &canonicalMode);
 }
 
 // Set Raw mode

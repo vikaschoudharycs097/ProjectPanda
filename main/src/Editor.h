@@ -29,6 +29,7 @@ private:
     // Private member functions
     void editText(void);
     void enableRawMode(void);
+    void disableRawMode(void);
     void setRawMode(void);
 
     // Static Constants
