@@ -62,5 +62,16 @@ void Editor::disableRawMode(void) {
 // Set Raw mode
 void Editor::setRawMode(void) {
     rawMode = canonicalMode;
-    rawMode.c_lflag &= ~(ECHO | ICANON);
+
+    // Disable ctrl-s, ctrl-q, ctrl-m and other miscellaneous flags
+    rawMode.c_iflag &= ~(IXON | ICRNL | BRKINT | INPCK | ISTRIP);
+
+    // Disable Output post processing
+    rawMode.c_oflag &= ~(OPOST);
+
+    // Set character size to 8 bits
+    rawMode.c_cflag |= (CS8);
+
+    // Disable echo, canonical mode, ctrl-z(or ctrl-y in mac), ctrl-c, ctrl-v
+    rawMode.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
 }
