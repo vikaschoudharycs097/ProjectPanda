@@ -8,6 +8,7 @@
 #include "Editor.h"
 #include <unistd.h>
 #include <termios.h>
+#include <cctype>
 
 Editor::Editor(): fileName(""), fileContent(""), currMode(EditorMode::COMMAND) {
     tcgetattr(STDIN_FILENO, &canonicalMode);
@@ -31,7 +32,13 @@ void Editor::editText(void) {
     enableRawMode();
 
     // Read text
-    while (read(STDIN_FILENO, &ch, 1) == 1 && ch != ESC);
+    while (read(STDIN_FILENO, &ch, 1) == 1 && ch != ESC) {
+        if (iscntrl(ch)) {
+            printf("%d\r\n", ch);
+        } else {
+            printf("%c\r\n", ch);
+        }
+    }
 
     // Disable Raw mode
     disableRawMode();
