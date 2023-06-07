@@ -28,6 +28,9 @@ Editor::~Editor() {
 void Editor::editText(void) {
     char ch;
 
+    // Refresh editor screen
+    refreshScreen();
+
     // Enable Raw mode
     enableRawMode();
 
@@ -81,4 +84,10 @@ void Editor::setRawMode(void) {
 
     // Disable echo, canonical mode, ctrl-z(or ctrl-y in mac), ctrl-c, ctrl-v
     rawMode.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
+}
+
+// Refresh the text editor screen
+void Editor::refreshScreen(void) {
+    write(STDOUT_FILENO, "\x1b[2J", 4);
+    write(STDOUT_FILENO, "\x1b[H", 4);
 }

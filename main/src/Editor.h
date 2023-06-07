@@ -31,6 +31,7 @@ private:
     void enableRawMode(void);
     void disableRawMode(void);
     void setRawMode(void);
+    void refreshScreen(void);
 
     // Static Constants
     const char ESC = (char) 27;
