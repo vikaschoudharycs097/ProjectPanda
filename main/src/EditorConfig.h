@@ -22,10 +22,13 @@ private:
     void getWindowsSize(void);
     void getCanonicalMode(void);
     void getRawMode(void);
+    void updateCursor(void);
 public:
     EditorConfig();
     void enableRawMode(void);
     void disableRawMode(void);
+    void setCursorToTopLeft(void);
+    void setCursorToBottomLeft(void);
 };
 
 #endif // EDITOR_CONFIG_H

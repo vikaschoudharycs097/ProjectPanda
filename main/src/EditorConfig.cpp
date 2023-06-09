@@ -4,9 +4,14 @@
  * @author Vikas Choudhary
  * @date   06/09/2023 
  ******************************************************/
+#include <string>
 #include <stdlib.h>
+#include <unistd.h>
+#include <termios.h>
 #include <sys/ioctl.h>
 #include "EditorConfig.h"
+using std::string;
+using std::to_string;
 
 EditorConfig::EditorConfig() {
     initEditorConfig();
@@ -17,7 +22,7 @@ void EditorConfig::initEditorConfig(void) {
     getWindowsSize();
     getCanonicalMode();
     getRawMode();
-    currRow = dimension.getRows();
+    currRow = ws.ws_row - 1;
     currCol = 0;
 }
 
@@ -59,4 +64,25 @@ void EditorConfig::enableRawMode(void) {
 // Disable Raw mode
 void EditorConfig::disableRawMode(void) {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &canonicalMode);
+}
+
+// Set cursor to (0, 0) - Top left
+void EditorConfig::setCursorToTopLeft(void) {
+    currRow = currCol = 0;
+    updateCursor();
+}
+
+// Set cursor to (maxRows-1, 0) - Bottom left
+void EditorConfig::setCursorToBottomLeft(void) {
+    currRow = ws.ws_row - 1;
+    currCol = 0;
+    updateCursor();
+}
+
+void EditorConfig::updateCursor() {
+    // Move the cursor to current position specified by (currRow, currCol)
+    const string currRowStr = to_string(currRow + 1);
+    const string currColStr = to_string(currCol + 1);
+    const string escapeSeq = "\x1b[" + currRowStr + ";" + currColStr + "H";
+    write(STDOUT_FILENO, escapeSeq.c_str(), 4 + currRowStr.length() + currColStr.length());
 }
