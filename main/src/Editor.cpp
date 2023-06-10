@@ -10,15 +10,11 @@
 #include <termios.h>
 #include <cctype>
 
-Editor::Editor(): fileName(""), fileContent(""), currMode(EditorMode::COMMAND) {
-    tcgetattr(STDIN_FILENO, &canonicalMode);
-    setRawMode();
+Editor::Editor(): fileName(""), fileContent(""), currMode(EditorMode::COMMAND), editorConfig() {
 }
 
 Editor::Editor(const string& fileName): fileName(fileName), fileContent(""), 
-        currMode(EditorMode::COMMAND) {
-    tcgetattr(STDIN_FILENO, &canonicalMode);
-    setRawMode();
+        currMode(EditorMode::COMMAND), editorConfig() {
 }
 
 Editor::~Editor() {
@@ -28,66 +24,81 @@ Editor::~Editor() {
 void Editor::editText(void) {
     char ch;
 
-    // Refresh editor screen
-    refreshScreen();
-
-    // Enable Raw mode
-    enableRawMode();
-
     // Read text
     while (read(STDIN_FILENO, &ch, 1) == 1 && ch != ESC) {
-        if (iscntrl(ch)) {
-            printf("%d\r\n", ch);
-        } else {
-            printf("%c\r\n", ch);
-        }
+        write(STDOUT_FILENO, &ch, 1);
     }
-
-    // Disable Raw mode
-    disableRawMode();
 }
 
-// Update the mode of editor
-void Editor::updateMode(const EditorMode newMode) {
-    currMode = newMode;
+// Invert the mode of editor
+void Editor::invertMode(void) {
+    if (EditorMode::EDIT == currMode) {
+        currMode = EditorMode::COMMAND;
+        editorConfig.setCursorToBottomLeft();
+    } else {
+        currMode = EditorMode::EDIT;
+        editorConfig.setCursorToTopLeft();
+    }
 }
 
 // Manages Editor's functionalities
 void Editor::start(void) {
+    bool exitEditor = false;
+
+    // Enable raw mode
+    editorConfig.enableRawMode();
+
+    // Refresh editor screen
+    refreshScreen();
+
+    // Draw tildes
+    drawTildes();
+
     // Testing: Update mode to Edit and call textEdit
-    updateMode(EditorMode::EDIT);
-    editText();
-}
+    do {
+        switch (currMode) {
+            case EditorMode::EDIT:
+                editText();
+                break;
+            case EditorMode::COMMAND:
+                exitEditor = getCommand() == 'q';
+                break;
+        }
 
-// Enable Raw mode
-void Editor::enableRawMode(void) {
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &rawMode);
-}
+        invertMode();
+    } while (!exitEditor);
 
-// Disable Raw or Enable Canonical mode
-void Editor::disableRawMode(void) {
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &canonicalMode);
-}
+    // Refresh editor screen
+    refreshScreen();
 
-// Set Raw mode
-void Editor::setRawMode(void) {
-    rawMode = canonicalMode;
-
-    // Disable ctrl-s, ctrl-q, ctrl-m and other miscellaneous flags
-    rawMode.c_iflag &= ~(IXON | ICRNL | BRKINT | INPCK | ISTRIP);
-
-    // Disable Output post processing
-    rawMode.c_oflag &= ~(OPOST);
-
-    // Set character size to 8 bits
-    rawMode.c_cflag |= (CS8);
-
-    // Disable echo, canonical mode, ctrl-z(or ctrl-y in mac), ctrl-c, ctrl-v
-    rawMode.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
+    // Disable raw mode
+    editorConfig.disableRawMode();
 }
 
 // Refresh the text editor screen
 void Editor::refreshScreen(void) {
     write(STDOUT_FILENO, "\x1b[2J", 4);
-    write(STDOUT_FILENO, "\x1b[H", 4);
+    write(STDOUT_FILENO, "\x1b[H", 3);
+}
+
+// Draw Tildes in first column
+void Editor::drawTildes(void) {
+    for (int i = 0, n = editorConfig.getWindowRows(); i < n; i++) {
+        write(STDOUT_FILENO, "~\r\n", 3);
+    }
+}
+
+// Get the command
+char Editor::getCommand(void) {
+    char ch;
+
+    // Read command
+    while (read(STDIN_FILENO, &ch, 1) == 1 && ch != ESC) {
+        write(STDOUT_FILENO, &ch, 1);
+        if (ch == 'q') {
+            break;
+        }
+    }
+    
+    return ch;
 }

@@ -9,6 +9,7 @@
 
 #include <string>
 #include <termios.h>
+#include "EditorConfig.h"
 using std::string;
 
 // Modes of editor(At a time one of these mode will be active)
@@ -23,15 +24,14 @@ private:
     string fileName;
     string fileContent;
     EditorMode currMode;
-    struct termios canonicalMode;
-    struct termios rawMode;
+    EditorConfig editorConfig;
 
     // Private member functions
     void editText(void);
-    void enableRawMode(void);
-    void disableRawMode(void);
-    void setRawMode(void);
     void refreshScreen(void);
+    void drawTildes(void);
+    void invertMode(void);
+    char getCommand(void);
 
     // Static Constants
     const char ESC = (char) 27;
@@ -40,7 +40,6 @@ public:
     Editor();
     Editor(const string& fileName);
     ~Editor();
-    void updateMode(const EditorMode newMode);
     void start();  // Manages Editor's functionalities
 };
 

@@ -24,12 +24,12 @@ void EditorConfig::initEditorConfig(void) {
     getRawMode();
     currRow = ws.ws_row - 1;
     currCol = 0;
+    updateCursor();
 }
 
 // Get window size
 void EditorConfig::getWindowsSize(void) {
-    struct winsize ws;
-    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1) {
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != 0) {
         exit(-1);
     }
 }
@@ -85,4 +85,14 @@ void EditorConfig::updateCursor() {
     const string currColStr = to_string(currCol + 1);
     const string escapeSeq = "\x1b[" + currRowStr + ";" + currColStr + "H";
     write(STDOUT_FILENO, escapeSeq.c_str(), 4 + currRowStr.length() + currColStr.length());
+}
+
+// Return the number of rows in window
+int EditorConfig::getWindowRows() {
+    return ws.ws_row;
+}
+
+// Return the number of columns in window
+int EditorConfig::getWindowColumns() {
+    return ws.ws_col;
 }
