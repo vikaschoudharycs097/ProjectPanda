@@ -83,7 +83,11 @@ void Editor::refreshScreen(void) {
 
 // Draw Tildes in first column
 void Editor::drawTildes(void) {
-    for (int i = 0, n = editorConfig.getWindowRows(); i < n; i++) {
+    // No Tildes in first row
+    write(STDOUT_FILENO, "\r\n", 2);
+
+    // Draw Tildes from [2, rows)
+    for (int i = 1, n = editorConfig.getWindowRows() - 1; i < n; i++) {
         write(STDOUT_FILENO, "~\r\n", 3);
     }
 }
