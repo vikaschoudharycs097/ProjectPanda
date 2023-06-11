@@ -84,12 +84,15 @@ void Editor::refreshScreen(void) {
 // Draw Tildes in first column
 void Editor::drawTildes(void) {
     // No Tildes in first row
-    write(STDOUT_FILENO, "\r\n", 2);
+    string tildes = "\r\n";
 
     // Draw Tildes from [2, rows)
     for (int i = 1, n = editorConfig.getWindowRows() - 1; i < n; i++) {
-        write(STDOUT_FILENO, "~\r\n", 3);
+        tildes += "~\r\n";
     }
+
+    // Write tildes in single syscall command
+    write(STDOUT_FILENO, tildes.c_str(), tildes.size());
 }
 
 // Get the command
