@@ -32,6 +32,7 @@ private:
     void drawTildes(void);
     void invertMode(void);
     char getCommand(void);
+    int readKeypress(void);
 
     // Static Constants
     const char ESC = (char) 27;

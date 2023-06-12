@@ -22,11 +22,18 @@ Editor::~Editor() {
 
 // Read text from STDIN in raw mode
 void Editor::editText(void) {
-    char ch;
+    int ch = 0;
 
     // Read text
-    while (read(STDIN_FILENO, &ch, 1) == 1 && ch != ESC) {
-        write(STDOUT_FILENO, &ch, 1);
+    while ((ch = readKeypress()) != ESC) {
+        switch (ch) {
+            case ARROW_DOWN:
+            case ARROW_RIGHT:
+            case ARROW_LEFT:
+            case ARROW_UP:
+                editorConfig.updateCurrentPosition(ch);
+                break;
+        }
     }
 }
 
@@ -97,15 +104,34 @@ void Editor::drawTildes(void) {
 
 // Get the command
 char Editor::getCommand(void) {
-    char ch;
+    char ch = 0;
 
     // Read command
-    while (read(STDIN_FILENO, &ch, 1) == 1 && ch != ESC) {
-        write(STDOUT_FILENO, &ch, 1);
-        if (ch == 'q') {
-            break;
-        }
+    while ((ch = readKeypress()) != ESC && ch != 'q') {
     }
     
+    return ch;
+}
+
+// Read key press
+int Editor::readKeypress(void) {
+    char ch;
+    read(STDIN_FILENO, &ch, 1);
+
+    if (ch == ESC) {
+        // Read remaining two bytes of escape sequence
+        char seq[3];
+        if (read(STDIN_FILENO, seq, 2) == 2) {
+            if (seq[0] == '[') {
+                switch (seq[1]) {
+                    case 'A': return ARROW_UP;
+                    case 'B': return ARROW_DOWN;
+                    case 'C': return ARROW_RIGHT;
+                    case 'D': return ARROW_LEFT;
+                }
+            }
+        } 
+    }
+
     return ch;
 }

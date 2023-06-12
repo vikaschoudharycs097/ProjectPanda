@@ -54,6 +54,11 @@ void EditorConfig::getRawMode(void) {
 
     // Disable echo, canonical mode, ctrl-z(or ctrl-y in mac), ctrl-c, ctrl-v
     rawMode.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
+
+    // Set read time to 0.1 s
+    rawMode.c_cc[VMIN] = 0;
+    rawMode.c_cc[VTIME] = 1;
+
 }
 
 // Enable Raw mode
@@ -95,4 +100,29 @@ int EditorConfig::getWindowRows() {
 // Return the number of columns in window
 int EditorConfig::getWindowColumns() {
     return ws.ws_col;
+}
+
+// Update current position based on input
+void EditorConfig::updateCurrentPosition(int ch) {
+    switch (ch) {
+        case ARROW_UP:
+            if (currRow > 0) {
+                currRow--;
+            }
+            break;
+        case ARROW_LEFT:
+            if (currCol > 0) {
+                currCol--;
+            }
+            break;
+        case ARROW_DOWN:
+            if (currRow < ws.ws_row - 1) {
+                currRow++;
+            }
+            break;
+        case ARROW_RIGHT:
+            if (currCol < ws.ws_col - 1) {
+                currCol++;
+            }
+    }
 }

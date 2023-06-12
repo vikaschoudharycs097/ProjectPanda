@@ -9,6 +9,13 @@
 
 #include <sys/ioctl.h>
 
+enum EditorKey {
+    ARROW_LEFT = 256,
+    ARROW_RIGHT,
+    ARROW_UP,
+    ARROW_DOWN
+};
+
 class EditorConfig {
 private:
     int currRow;
@@ -32,6 +39,7 @@ public:
     void setCursorToBottomLeft(void);
     int getWindowRows(void);
     int getWindowColumns(void);
+    void updateCurrentPosition(int ch);
 };
 
 #endif // EDITOR_CONFIG_H
