@@ -8,9 +8,11 @@
 #define EDITOR_H
 
 #include <string>
+#include <vector>
 #include <termios.h>
 #include "EditorConfig.h"
 using std::string;
+using std::vector;
 
 // Modes of editor(At a time one of these mode will be active)
 enum class EditorMode {
@@ -25,6 +27,7 @@ private:
     string fileContent;
     EditorMode currMode;
     EditorConfig editorConfig;
+    vector<string> textRows;
 
     // Private member functions
     void editText(void);
