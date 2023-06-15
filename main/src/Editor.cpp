@@ -10,26 +10,27 @@
 #include <termios.h>
 #include <fstream>
 #include <cctype>
-#include <iostream>
+#include <algorithm>
 using std::fstream;
-using std::cout;
+using std::max;
 
 Editor::Editor(): fileName(""), currMode(EditorMode::COMMAND), editorConfig() {
 }
 
 Editor::Editor(const string& fileName): fileName(fileName), currMode(EditorMode::COMMAND), editorConfig() {
+    size_t maxColumns = 0;
     if (fileName != "") {
-        fstream file(fileName, fstream::in | fstream::out);
-        if (file.is_open()) {
-            string line;
-            while (file) {
-                getline(file, line);
-                textRows.push_back(line);
-            }
-        } else {
-            cout << "Not opened\n";
+        string line;
+        fstream file(fileName, fstream::in | fstream::app);
+        while (!file.eof()) {
+            getline(file, line);
+            textRows.push_back(line);
+            maxColumns = max(maxColumns, line.length());
         }
     }
+
+    editorConfig.setRows(textRows.size());
+    editorConfig.setColumns(maxColumns);
 }
 
 Editor::~Editor() {
@@ -105,11 +106,21 @@ void Editor::refreshScreen(void) {
 
 // Draw Tildes in first column
 void Editor::drawTildes(void) {
-    // No Tildes in first row
-    string tildes = "\r\n";
+    string tildes = "";
+    int n = textRows.size();
+    for (int i = 0; i < n - 1; i++) {
+        tildes += textRows[i] + "\r\n";
+    }
 
-    // Draw Tildes from [2, rows)
-    for (int i = 1, n = editorConfig.getWindowRows() - 1; i < n; i++) {
+    if (n == 0) {
+        // No Tildes in first row
+        tildes = "\r\n";
+    } else {
+        tildes += textRows[n-1] + "\r\n";
+    }
+
+    // Draw Tildes from [n, rows)
+    for (int i = n, m = editorConfig.getWindowRows() - 1; i < m; i++) {
         tildes += "~\r\n";
     }
 
@@ -136,14 +147,12 @@ int Editor::readKeypress(void) {
     if (ch == ESC) {
         // Read remaining two bytes of escape sequence
         char seq[3];
-        if (read(STDIN_FILENO, seq, 2) == 2) {
-            if (seq[0] == '[') {
-                switch (seq[1]) {
-                    case 'A': return ARROW_UP;
-                    case 'B': return ARROW_DOWN;
-                    case 'C': return ARROW_RIGHT;
-                    case 'D': return ARROW_LEFT;
-                }
+        if (read(STDIN_FILENO, seq, 2) == 2 && seq[0] == '[') {
+            switch (seq[1]) {
+                case 'A': return ARROW_UP;
+                case 'B': return ARROW_DOWN;
+                case 'C': return ARROW_RIGHT;
+                case 'D': return ARROW_LEFT;
             }
         } 
     }

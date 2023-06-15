@@ -24,6 +24,7 @@ void EditorConfig::initEditorConfig(void) {
     getRawMode();
     currRow = ws.ws_row - 1;
     currCol = 0;
+    rows = columns = 0;
     updateCursor();
 }
 
@@ -116,13 +117,29 @@ void EditorConfig::updateCurrentPosition(int ch) {
             }
             break;
         case ARROW_DOWN:
-            if (currRow < ws.ws_row - 1) {
+            if (currRow < rows - 1) {
                 currRow++;
             }
             break;
         case ARROW_RIGHT:
-            if (currCol < ws.ws_col - 1) {
+            if (currCol < columns - 1) {
                 currCol++;
             }
     }
+}
+
+void EditorConfig::setRows(int rows) {
+    this->rows = rows;
+}
+
+void EditorConfig::setColumns(int columns) {
+    this->columns = columns;
+}
+
+int EditorConfig::getRows(void) {
+    return rows;
+}
+
+int EditorConfig::getColumns(void) {
+    return columns;
 }

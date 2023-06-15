@@ -9,7 +9,7 @@
 int main(int argc, char *argv[]) {
     if (argc == 2) {
         Editor editor(argv[1]);
-        //editor.start();
+        editor.start();
     } else {
         Editor editor;
         editor.start();

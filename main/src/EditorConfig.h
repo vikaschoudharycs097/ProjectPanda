@@ -20,6 +20,8 @@ class EditorConfig {
 private:
     int currRow;
     int currCol;
+    int rows;
+    int columns;
     struct winsize ws;
     struct termios canonicalMode;
     struct termios rawMode;
@@ -40,6 +42,10 @@ public:
     int getWindowRows(void);
     int getWindowColumns(void);
     void updateCurrentPosition(int ch);
+    void setRows(int rows);
+    void setColumns(int columns);
+    int getRows(void);
+    int getColumns(void);
 };
 
 #endif // EDITOR_CONFIG_H
