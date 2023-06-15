@@ -8,13 +8,28 @@
 #include "Editor.h"
 #include <unistd.h>
 #include <termios.h>
+#include <fstream>
 #include <cctype>
+#include <iostream>
+using std::fstream;
+using std::cout;
 
-Editor::Editor(): fileName(""), fileContent(""), currMode(EditorMode::COMMAND), editorConfig() {
+Editor::Editor(): fileName(""), currMode(EditorMode::COMMAND), editorConfig() {
 }
 
-Editor::Editor(const string& fileName): fileName(fileName), fileContent(""), 
-        currMode(EditorMode::COMMAND), editorConfig() {
+Editor::Editor(const string& fileName): fileName(fileName), currMode(EditorMode::COMMAND), editorConfig() {
+    if (fileName != "") {
+        fstream file(fileName, fstream::in | fstream::out);
+        if (file.is_open()) {
+            string line;
+            while (file) {
+                getline(file, line);
+                textRows.push_back(line);
+            }
+        } else {
+            cout << "Not opened\n";
+        }
+    }
 }
 
 Editor::~Editor() {

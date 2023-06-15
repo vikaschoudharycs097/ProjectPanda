@@ -6,8 +6,13 @@
  **************************************/
 #include "Editor.h"
 
-int main(void) {
-    Editor editor;
-    editor.start();
+int main(int argc, char *argv[]) {
+    if (argc == 2) {
+        Editor editor(argv[1]);
+        //editor.start();
+    } else {
+        Editor editor;
+        editor.start();
+    }
     return 0;
 }

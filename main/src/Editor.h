@@ -24,7 +24,6 @@ class Editor {
 private:
     // Private data members
     string fileName;
-    string fileContent;
     EditorMode currMode;
     EditorConfig editorConfig;
     vector<string> textRows;
