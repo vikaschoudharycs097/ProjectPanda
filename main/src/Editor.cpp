@@ -10,11 +10,15 @@
 #include <termios.h>
 #include <fstream>
 #include <cctype>
+#include <vector>
+#include <string>
 #include <algorithm>
 using std::fstream;
 using std::max;
+using std::vector;
+using std::string;
 
-Editor::Editor(): fileName(""), currMode(EditorMode::COMMAND), editorConfig() {
+Editor::Editor(): fileName(""), currMode(EditorMode::COMMAND), editorConfig(), textRows{""} {
 }
 
 Editor::Editor(const string& fileName): fileName(fileName), currMode(EditorMode::COMMAND), editorConfig() {
@@ -28,9 +32,6 @@ Editor::Editor(const string& fileName): fileName(fileName), currMode(EditorMode:
             maxColumns = max(maxColumns, line.length());
         }
     }
-
-    editorConfig.setRows(textRows.size());
-    editorConfig.setColumns(maxColumns);
 }
 
 Editor::~Editor() {
@@ -47,7 +48,7 @@ void Editor::editText(void) {
             case ARROW_RIGHT:
             case ARROW_LEFT:
             case ARROW_UP:
-                editorConfig.updateCurrentPosition(ch);
+                editorConfig.updateCurrentPosition(ch, textRows);
                 break;
         }
     }

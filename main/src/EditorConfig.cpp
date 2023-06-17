@@ -5,12 +5,16 @@
  * @date   06/09/2023 
  ******************************************************/
 #include <string>
+#include <vector>
+#include <algorithm>
 #include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
 #include <sys/ioctl.h>
 #include "EditorConfig.h"
+using std::min;
 using std::string;
+using std::vector;
 using std::to_string;
 
 EditorConfig::EditorConfig() {
@@ -24,7 +28,6 @@ void EditorConfig::initEditorConfig(void) {
     getRawMode();
     currRow = ws.ws_row - 1;
     currCol = 0;
-    rows = columns = 0;
     updateCursor();
 }
 
@@ -104,11 +107,12 @@ int EditorConfig::getWindowColumns() {
 }
 
 // Update current position based on input
-void EditorConfig::updateCurrentPosition(int ch) {
+void EditorConfig::updateCurrentPosition(int ch, const vector<string>& textRows) {
     switch (ch) {
         case ARROW_UP:
             if (currRow > 0) {
                 currRow--;
+                currCol = min(currCol, textRows[currRow].size() - 1);
             }
             break;
         case ARROW_LEFT:
@@ -117,29 +121,17 @@ void EditorConfig::updateCurrentPosition(int ch) {
             }
             break;
         case ARROW_DOWN:
-            if (currRow < rows - 1) {
+            if (currRow < textRows.size() - 1) {
                 currRow++;
+                currCol = min(currCol, textRows[currRow].size() - 1);
             }
             break;
         case ARROW_RIGHT:
-            if (currCol < columns - 1) {
+            if (currCol < textRows[currRow].size() - 1) {
                 currCol++;
             }
     }
-}
 
-void EditorConfig::setRows(int rows) {
-    this->rows = rows;
-}
-
-void EditorConfig::setColumns(int columns) {
-    this->columns = columns;
-}
-
-int EditorConfig::getRows(void) {
-    return rows;
-}
-
-int EditorConfig::getColumns(void) {
-    return columns;
+    // Update cursor to new position
+    updateCursor();
 }

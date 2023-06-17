@@ -7,7 +7,11 @@
 #ifndef EDITOR_CONFIG_H
 #define EDITOR_CONFIG_H
 
+#include <string>
+#include <vector>
 #include <sys/ioctl.h>
+using std::string;
+using std::vector;
 
 enum EditorKey {
     ARROW_LEFT = 256,
@@ -18,10 +22,8 @@ enum EditorKey {
 
 class EditorConfig {
 private:
-    int currRow;
-    int currCol;
-    int rows;
-    int columns;
+    size_t currRow;
+    size_t currCol;
     struct winsize ws;
     struct termios canonicalMode;
     struct termios rawMode;
@@ -41,11 +43,7 @@ public:
     void setCursorToBottomLeft(void);
     int getWindowRows(void);
     int getWindowColumns(void);
-    void updateCurrentPosition(int ch);
-    void setRows(int rows);
-    void setColumns(int columns);
-    int getRows(void);
-    int getColumns(void);
+    void updateCurrentPosition(int ch, const vector<string>& textRows);
 };
 
 #endif // EDITOR_CONFIG_H
