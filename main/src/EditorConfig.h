@@ -14,6 +14,7 @@ using std::string;
 using std::vector;
 
 enum EditorKey {
+    NEWLINE = 13,
     ARROW_LEFT = 256,
     ARROW_RIGHT,
     ARROW_UP,

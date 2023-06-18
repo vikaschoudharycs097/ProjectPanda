@@ -48,7 +48,13 @@ void Editor::editText(void) {
             case ARROW_RIGHT:
             case ARROW_LEFT:
             case ARROW_UP:
+            case NEWLINE:
                 editorConfig.updateCurrentPosition(ch, textRows);
+                break;
+            case '\0':
+                break;
+            default:
+                write(STDOUT_FILENO, &ch, 1);
                 break;
         }
     }
@@ -142,7 +148,7 @@ char Editor::getCommand(void) {
 
 // Read key press
 int Editor::readKeypress(void) {
-    char ch;
+    char ch = '\0';
     read(STDIN_FILENO, &ch, 1);
 
     if (ch == ESC) {
