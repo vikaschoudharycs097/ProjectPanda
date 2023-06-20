@@ -14,6 +14,7 @@ using std::string;
 using std::vector;
 
 enum EditorKey {
+    HORIZONTAL_TAB = 9,
     NEWLINE = 13,
     ARROW_LEFT = 256,
     ARROW_RIGHT,
@@ -25,6 +26,7 @@ class EditorConfig {
 private:
     size_t currRow;
     size_t currCol;
+    size_t tabLength;
     struct winsize ws;
     struct termios canonicalMode;
     struct termios rawMode;

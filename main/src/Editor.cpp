@@ -49,6 +49,7 @@ void Editor::editText(void) {
             case ARROW_LEFT:
             case ARROW_UP:
             case NEWLINE:
+            case HORIZONTAL_TAB:
                 editorConfig.updateCurrentPosition(ch, textRows);
                 break;
             case '\0':

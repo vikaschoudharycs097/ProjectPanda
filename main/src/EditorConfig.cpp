@@ -28,6 +28,7 @@ void EditorConfig::initEditorConfig(void) {
     getRawMode();
     currRow = ws.ws_row - 1;
     currCol = 0;
+    tabLength = 4;
     updateCursor();
 }
 
@@ -134,6 +135,9 @@ void EditorConfig::updateCurrentPosition(int ch, const vector<string>& textRows)
         case NEWLINE:
             currRow++;
             currCol = 0;
+            break;
+        case HORIZONTAL_TAB:
+            currCol += tabLength;
             break;
     }
     
