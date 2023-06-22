@@ -139,6 +139,12 @@ void EditorConfig::updateCurrentPosition(int ch, const vector<string>& textRows)
         case HORIZONTAL_TAB:
             currCol += tabLength;
             break;
+        case HOME_KEY:
+            currCol = 0;
+            break;
+        case END_KEY:
+            currCol = textRows[currRow].size() - 1;
+            break;
     }
     
     // Update cursor to new position

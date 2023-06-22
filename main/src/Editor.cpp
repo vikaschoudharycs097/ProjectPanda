@@ -50,6 +50,8 @@ void Editor::editText(void) {
             case ARROW_UP:
             case NEWLINE:
             case HORIZONTAL_TAB:
+            case HOME_KEY:
+            case END_KEY:
                 editorConfig.updateCurrentPosition(ch, textRows);
                 break;
             case '\0':
@@ -161,6 +163,12 @@ int Editor::readKeypress(void) {
                 case 'B': return ARROW_DOWN;
                 case 'C': return ARROW_RIGHT;
                 case 'D': return ARROW_LEFT;
+                case '1': 
+                case '7':
+                    return HOME_KEY;
+                case '4':
+                case '8':
+                    return END_KEY;
             }
         } 
     }

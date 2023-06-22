@@ -19,7 +19,9 @@ enum EditorKey {
     ARROW_LEFT = 256,
     ARROW_RIGHT,
     ARROW_UP,
-    ARROW_DOWN
+    ARROW_DOWN,
+    HOME_KEY,
+    END_KEY
 };
 
 class EditorConfig {
