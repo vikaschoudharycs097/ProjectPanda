@@ -165,9 +165,11 @@ int Editor::readKeypress(void) {
                 case 'D': return ARROW_LEFT;
                 case '1': 
                 case '7':
+                case 'H':
                     return HOME_KEY;
                 case '4':
                 case '8':
+                case 'F':
                     return END_KEY;
             }
         } 
