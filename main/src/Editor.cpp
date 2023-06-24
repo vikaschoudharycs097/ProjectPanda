@@ -22,14 +22,12 @@ Editor::Editor(): fileName(""), currMode(EditorMode::COMMAND), editorConfig(), t
 }
 
 Editor::Editor(const string& fileName): fileName(fileName), currMode(EditorMode::COMMAND), editorConfig() {
-    size_t maxColumns = 0;
     if (fileName != "") {
         string line;
         fstream file(fileName, fstream::in | fstream::app);
         while (!file.eof()) {
             getline(file, line);
             textRows.push_back(line);
-            maxColumns = max(maxColumns, line.length());
         }
     }
 }
@@ -57,6 +55,7 @@ void Editor::editText(void) {
             case '\0':
                 break;
             default:
+                insertChar(ch, editorConfig.getCurrRow(), editorConfig.getCurrCol());
                 write(STDOUT_FILENO, &ch, 1);
                 break;
         }
@@ -176,4 +175,26 @@ int Editor::readKeypress(void) {
     }
 
     return ch;
+}
+
+// Insert a character at given position
+void Editor::insertChar(char ch, size_t row, size_t col) {
+    switch (ch) {
+        case NEWLINE:
+            break;
+        case HORIZONTAL_TAB:
+            break;
+        default:
+            if (col == textRows[row].size()) {
+                textRows[row].push_back(ch);
+            } else {
+                textRows[row].push_back(ch);
+                for (size_t i = textRows[row].size() - 2; i > col; i--) {
+                    textRows[row][i] = textRows[row][i-1];
+                }
+                textRows[row][col] = ch;
+            }
+            editorConfig.updateCurrCol(col + 1);
+            break;
+    }
 }

@@ -46,8 +46,12 @@ public:
     void disableRawMode(void);
     void setCursorToTopLeft(void);
     void setCursorToBottomLeft(void);
-    int getWindowRows(void);
-    int getWindowColumns(void);
+    size_t getWindowRows(void);
+    size_t getWindowCols(void);
+    size_t getCurrRow(void);
+    size_t getCurrCol(void);
+    void updateCurrRow(size_t newRow);
+    void updateCurrCol(size_t newCol);
     void updateCurrentPosition(int ch, const vector<string>& textRows);
 };
 

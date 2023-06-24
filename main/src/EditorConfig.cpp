@@ -98,12 +98,12 @@ void EditorConfig::updateCursor() {
 }
 
 // Return the number of rows in window
-int EditorConfig::getWindowRows() {
+size_t EditorConfig::getWindowRows() {
     return ws.ws_row;
 }
 
 // Return the number of columns in window
-int EditorConfig::getWindowColumns() {
+size_t EditorConfig::getWindowCols() {
     return ws.ws_col;
 }
 
@@ -149,4 +149,20 @@ void EditorConfig::updateCurrentPosition(int ch, const vector<string>& textRows)
     
     // Update cursor to new position
     updateCursor();
+}
+
+size_t EditorConfig::getCurrRow(void) {
+    return currRow;
+}
+
+size_t EditorConfig::getCurrCol(void) {
+    return currCol;
+}
+
+void EditorConfig::updateCurrRow(size_t newRow) {
+    currRow = newRow;
+}
+
+void EditorConfig::updateCurrCol(size_t newCol) {
+    currCol = newCol;
 }
