@@ -108,7 +108,7 @@ size_t EditorConfig::getWindowCols() {
 }
 
 // Update current position based on input
-void EditorConfig::updateCurrentPosition(int ch, const vector<string>& textRows) {
+void EditorConfig::moveCursor(int ch, const vector<string>& textRows) {
     switch (ch) {
         case ARROW_UP:
             if (currRow > 0) {
@@ -132,18 +132,11 @@ void EditorConfig::updateCurrentPosition(int ch, const vector<string>& textRows)
                 currCol++;
             }
             break;
-        case NEWLINE:
-            currRow++;
-            currCol = 0;
-            break;
-        case HORIZONTAL_TAB:
-            currCol += tabLength;
-            break;
         case HOME_KEY:
             currCol = 0;
             break;
         case END_KEY:
-            currCol = textRows[currRow].size() - 1;
+            currCol = textRows[currRow].size() == 0 ? 0 : textRows[currRow].size() - 1;
             break;
     }
     
@@ -165,4 +158,14 @@ void EditorConfig::updateCurrRow(size_t newRow) {
 
 void EditorConfig::updateCurrCol(size_t newCol) {
     currCol = newCol;
+}
+
+void EditorConfig::updateCurrentPositionAndCursor(size_t newRow, size_t newCol) {
+    currRow = newRow;
+    currCol = newCol;
+    updateCursor();
+}
+
+size_t EditorConfig::getTabLength(void) {
+    return tabLength;
 }

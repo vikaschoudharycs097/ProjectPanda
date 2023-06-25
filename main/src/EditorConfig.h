@@ -38,7 +38,6 @@ private:
     void getWindowsSize(void);
     void getCanonicalMode(void);
     void getRawMode(void);
-    void updateCursor(void);
     
 public:
     EditorConfig();
@@ -50,9 +49,12 @@ public:
     size_t getWindowCols(void);
     size_t getCurrRow(void);
     size_t getCurrCol(void);
+    size_t getTabLength(void);
     void updateCurrRow(size_t newRow);
     void updateCurrCol(size_t newCol);
-    void updateCurrentPosition(int ch, const vector<string>& textRows);
+    void updateCursor(void);
+    void moveCursor(int ch, const vector<string>& textRows);
+    void updateCurrentPositionAndCursor(size_t newRow, size_t newCol);
 };
 
 #endif // EDITOR_CONFIG_H

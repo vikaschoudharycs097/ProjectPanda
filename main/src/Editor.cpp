@@ -46,11 +46,9 @@ void Editor::editText(void) {
             case ARROW_RIGHT:
             case ARROW_LEFT:
             case ARROW_UP:
-            case NEWLINE:
-            case HORIZONTAL_TAB:
             case HOME_KEY:
             case END_KEY:
-                editorConfig.updateCurrentPosition(ch, textRows);
+                editorConfig.moveCursor(ch, textRows);
                 break;
             case '\0':
                 break;
@@ -178,9 +176,12 @@ int Editor::readKeypress(void) {
 }
 
 // Insert a character at given position
-void Editor::insertChar(char ch, size_t row, size_t col) {
+void Editor::insertChar(int ch, size_t row, size_t col) {
     switch (ch) {
         case NEWLINE:
+            editorConfig.updateCurrentPositionAndCursor(row + 1, 0);
+            write(STDOUT_FILENO, "\x1b[2K", 4);
+            textRows.push_back("");
             break;
         case HORIZONTAL_TAB:
             break;

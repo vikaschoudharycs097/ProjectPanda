@@ -35,7 +35,7 @@ private:
     void invertMode(void);
     char getCommand(void);
     int readKeypress(void);
-    void insertChar(char ch, size_t row, size_t col);
+    void insertChar(int ch, size_t row, size_t col);
 
     // Static Constants
     const char ESC = (char) 27;
