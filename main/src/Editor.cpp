@@ -179,9 +179,17 @@ int Editor::readKeypress(void) {
 void Editor::insertChar(int ch, size_t row, size_t col) {
     switch (ch) {
         case NEWLINE:
+            if (row + 1 == textRows.size()) {
+                write(STDOUT_FILENO, "\x1b[2K", 4);
+                textRows.push_back("");
+            } else {
+                textRows.push_back("");
+                for (size_t i = textRows.size() - 1; i > row + 1; i--) {
+                    textRows[i] = textRows[i-1];
+                }
+                textRows[row + 1] = "";
+            }
             editorConfig.updateCurrentPositionAndCursor(row + 1, 0);
-            write(STDOUT_FILENO, "\x1b[2K", 4);
-            textRows.push_back("");
             break;
         case HORIZONTAL_TAB:
             break;
