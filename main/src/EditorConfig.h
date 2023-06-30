@@ -30,26 +30,37 @@ private:
     size_t currCol;
     size_t tabLength;
     struct winsize ws;
-    struct termios canonicalMode;
     struct termios rawMode;
+    struct termios canonicalMode;
 
-    // Private member functions
+    // Initilize Editor configuration
     void initEditorConfig(void);
+
+    // Getters
     void getWindowsSize(void);
     void getCanonicalMode(void);
     void getRawMode(void);
     
 public:
+    // Constructor
     EditorConfig();
-    void enableRawMode(void);
-    void disableRawMode(void);
-    void setCursorToTopLeft(void);
-    void setCursorToBottomLeft(void);
+
+    // Getters
     size_t getWindowRows(void);
     size_t getWindowCols(void);
     size_t getCurrRow(void);
     size_t getCurrCol(void);
     size_t getTabLength(void);
+
+    // Setters
+    void setCursorToTopLeft(void);
+    void setCursorToBottomLeft(void);
+    
+    // Update Editor mode
+    void enableRawMode(void);
+    void disableRawMode(void);
+    
+    // Update Editor confiuration
     void updateCurrRow(size_t newRow);
     void updateCurrCol(size_t newCol);
     void updateCursor(void);

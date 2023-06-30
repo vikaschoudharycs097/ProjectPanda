@@ -7,10 +7,12 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cstring>
 #include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
 #include <sys/ioctl.h>
+#include "Error.h"
 #include "EditorConfig.h"
 using std::min;
 using std::string;
@@ -26,16 +28,16 @@ void EditorConfig::initEditorConfig(void) {
     getWindowsSize();
     getCanonicalMode();
     getRawMode();
-    currRow = ws.ws_row - 1;
     currCol = 0;
     tabLength = 4;
+    currRow = ws.ws_row - 1;
     updateCursor();
 }
 
 // Get window size
 void EditorConfig::getWindowsSize(void) {
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != 0) {
-        exit(-1);
+        exit();
     }
 }
 
@@ -66,14 +68,29 @@ void EditorConfig::getRawMode(void) {
 
 }
 
-// Enable Raw mode
-void EditorConfig::enableRawMode(void) {
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &rawMode);
+// Get the number of rows in window
+size_t EditorConfig::getWindowRows() {
+    return ws.ws_row;
 }
 
-// Disable Raw mode
-void EditorConfig::disableRawMode(void) {
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &canonicalMode);
+// Get the number of columns in window
+size_t EditorConfig::getWindowCols() {
+    return ws.ws_col;
+}
+
+// Get row of cursor
+size_t EditorConfig::getCurrRow(void) {
+    return currRow;
+}
+
+// Get column of cursor
+size_t EditorConfig::getCurrCol(void) {
+    return currCol;
+}
+
+// Get Tab length
+size_t EditorConfig::getTabLength(void) {
+    return tabLength;
 }
 
 // Set cursor to (0, 0) - Top left
@@ -89,22 +106,29 @@ void EditorConfig::setCursorToBottomLeft(void) {
     updateCursor();
 }
 
+// Enable Raw mode
+void EditorConfig::enableRawMode(void) {
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &rawMode);
+}
+
+// Disable Raw mode
+void EditorConfig::disableRawMode(void) {
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &canonicalMode);
+}
+
+void EditorConfig::updateCurrRow(size_t newRow) {
+    currRow = newRow;
+}
+
+void EditorConfig::updateCurrCol(size_t newCol) {
+    currCol = newCol;
+}
+
 void EditorConfig::updateCursor() {
     // Move the cursor to current position specified by (currRow, currCol)
-    const string currRowStr = to_string(currRow + 1);
-    const string currColStr = to_string(currCol + 1);
-    const string escapeSeq = "\x1b[" + currRowStr + ";" + currColStr + "H";
-    write(STDOUT_FILENO, escapeSeq.c_str(), 4 + currRowStr.length() + currColStr.length());
-}
-
-// Return the number of rows in window
-size_t EditorConfig::getWindowRows() {
-    return ws.ws_row;
-}
-
-// Return the number of columns in window
-size_t EditorConfig::getWindowCols() {
-    return ws.ws_col;
+    char escapeSeq[20];
+    sprintf(escapeSeq, "\x1b[%ld;%ldH", currRow + 1, currCol + 1);
+    write(STDOUT_FILENO, escapeSeq, strlen(escapeSeq));
 }
 
 // Update current position based on input
@@ -144,28 +168,8 @@ void EditorConfig::moveCursor(int ch, const vector<string>& textRows) {
     updateCursor();
 }
 
-size_t EditorConfig::getCurrRow(void) {
-    return currRow;
-}
-
-size_t EditorConfig::getCurrCol(void) {
-    return currCol;
-}
-
-void EditorConfig::updateCurrRow(size_t newRow) {
-    currRow = newRow;
-}
-
-void EditorConfig::updateCurrCol(size_t newCol) {
-    currCol = newCol;
-}
-
 void EditorConfig::updateCurrentPositionAndCursor(size_t newRow, size_t newCol) {
     currRow = newRow;
     currCol = newCol;
     updateCursor();
-}
-
-size_t EditorConfig::getTabLength(void) {
-    return tabLength;
 }
