@@ -30,12 +30,15 @@ private:
 
     // Private member functions
     void editText(void);
-    void refreshScreen(void);
     void drawTildes(void);
     void invertMode(void);
     char getCommand(void);
     int readKeypress(void);
-    void insertChar(int ch, size_t row, size_t col);
+    void refreshScreen(void);
+    void insertChar(int ch);
+    void handleNewline(int ch);
+    void handleIsGraph(int ch);
+    void handleHorizontalTab(int ch);
 
     // Static Constants
     const char ESC = (char) 27;

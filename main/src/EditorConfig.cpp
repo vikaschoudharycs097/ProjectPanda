@@ -15,6 +15,7 @@
 #include "Error.h"
 #include "EditorConfig.h"
 using std::min;
+using std::max;
 using std::string;
 using std::vector;
 using std::to_string;
@@ -37,7 +38,7 @@ void EditorConfig::initEditorConfig(void) {
 // Get window size
 void EditorConfig::getWindowsSize(void) {
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != 0) {
-        exit();
+        exit(Error::WINSIZE_EXTRACTION_FAILED);
     }
 }
 
@@ -65,7 +66,6 @@ void EditorConfig::getRawMode(void) {
     // Set read time to 0.1 s
     rawMode.c_cc[VMIN] = 0;
     rawMode.c_cc[VTIME] = 1;
-
 }
 
 // Get the number of rows in window
@@ -116,28 +116,30 @@ void EditorConfig::disableRawMode(void) {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &canonicalMode);
 }
 
+// Update row of cursor
 void EditorConfig::updateCurrRow(size_t newRow) {
     currRow = newRow;
 }
 
+// Update column of cursor
 void EditorConfig::updateCurrCol(size_t newCol) {
     currCol = newCol;
 }
 
+// Update cursor to (currRow, currCol)
 void EditorConfig::updateCursor() {
-    // Move the cursor to current position specified by (currRow, currCol)
     char escapeSeq[20];
     sprintf(escapeSeq, "\x1b[%ld;%ldH", currRow + 1, currCol + 1);
     write(STDOUT_FILENO, escapeSeq, strlen(escapeSeq));
 }
 
 // Update current position based on input
-void EditorConfig::moveCursor(int ch, const vector<string>& textRows) {
+void EditorConfig::updateCursor(int ch, const vector<string>& textRows) {
     switch (ch) {
         case ARROW_UP:
             if (currRow > 0) {
                 currRow--;
-                currCol = min(currCol, textRows[currRow].size() - 1);
+                currCol = min(currCol, max(0ul, textRows[currRow].size() - 1));
             }
             break;
         case ARROW_LEFT:
@@ -148,7 +150,7 @@ void EditorConfig::moveCursor(int ch, const vector<string>& textRows) {
         case ARROW_DOWN:
             if (currRow < textRows.size() - 1) {
                 currRow++;
-                currCol = min(currCol, textRows[currRow].size() - 1);
+                currCol = min(currCol, max(0ul, textRows[currRow].size() - 1));
             }
             break;
         case ARROW_RIGHT:
@@ -160,7 +162,7 @@ void EditorConfig::moveCursor(int ch, const vector<string>& textRows) {
             currCol = 0;
             break;
         case END_KEY:
-            currCol = textRows[currRow].size() == 0 ? 0 : textRows[currRow].size() - 1;
+            currCol = max(0ul, textRows[currRow].size() - 1);
             break;
     }
     
@@ -168,7 +170,7 @@ void EditorConfig::moveCursor(int ch, const vector<string>& textRows) {
     updateCursor();
 }
 
-void EditorConfig::updateCurrentPositionAndCursor(size_t newRow, size_t newCol) {
+void EditorConfig::updateCursor(size_t newRow, size_t newCol) {
     currRow = newRow;
     currCol = newCol;
     updateCursor();

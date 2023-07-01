@@ -42,19 +42,18 @@ void Editor::editText(void) {
     // Read text
     while ((ch = readKeypress()) != ESC) {
         switch (ch) {
+            case '\0':
+                break;
             case ARROW_DOWN:
             case ARROW_RIGHT:
             case ARROW_LEFT:
             case ARROW_UP:
             case HOME_KEY:
             case END_KEY:
-                editorConfig.moveCursor(ch, textRows);
-                break;
-            case '\0':
+                editorConfig.updateCursor(ch, textRows);
                 break;
             default:
-                insertChar(ch, editorConfig.getCurrRow(), editorConfig.getCurrCol());
-                write(STDOUT_FILENO, &ch, 1);
+                insertChar(ch);
                 break;
         }
     }
@@ -176,34 +175,53 @@ int Editor::readKeypress(void) {
 }
 
 // Insert a character at given position
-void Editor::insertChar(int ch, size_t row, size_t col) {
+void Editor::insertChar(int ch) {
     switch (ch) {
         case NEWLINE:
-            if (row + 1 == textRows.size()) {
-                write(STDOUT_FILENO, "\x1b[2K", 4);
-                textRows.push_back("");
-            } else {
-                textRows.push_back("");
-                for (size_t i = textRows.size() - 1; i > row + 1; i--) {
-                    textRows[i] = textRows[i-1];
-                }
-                textRows[row + 1] = "";
-            }
-            editorConfig.updateCurrentPositionAndCursor(row + 1, 0);
+            handleNewline(ch);
             break;
         case HORIZONTAL_TAB:
             break;
         default:
-            if (col == textRows[row].size()) {
-                textRows[row].push_back(ch);
-            } else {
-                textRows[row].push_back(ch);
-                for (size_t i = textRows[row].size() - 2; i > col; i--) {
-                    textRows[row][i] = textRows[row][i-1];
-                }
-                textRows[row][col] = ch;
-            }
-            editorConfig.updateCurrCol(col + 1);
+            handleIsGraph(ch);
             break;
     }
+}
+
+// Handle new line input
+void Editor::handleNewline(int ch) {
+    size_t row = editorConfig.getCurrRow();
+    size_t col = editorConfig.getCurrCol();
+    textRows.push_back("");
+    editorConfig.updateCursor(row + 1, 0);
+    if (row + 2 == textRows.size()) {
+        write(STDOUT_FILENO, "\x1b[2K", 4);
+    } else {
+        for (size_t i = textRows.size() - 1; i > row + 1; i--) {
+            textRows[i] = textRows[i-1];
+        }
+
+        textRows[row + 1] = textRows[row].substr(col);
+        textRows.resize(col);
+    }
+}
+
+// Handle horizontal tab input
+void Editor::handleHorizontalTab(int ch) {
+
+}
+
+// Handle isgraph character input
+void Editor::handleIsGraph(int ch) {
+    size_t row = editorConfig.getCurrRow();
+    size_t col = editorConfig.getCurrCol();
+    textRows[row].push_back(ch);
+    if (col + 1 != textRows[row].size()) {
+        for (size_t i = textRows[row].size() - 1; i > col; i--) {
+            textRows[row][i] = textRows[row][i - 1];
+        }
+        textRows[row][col] = ch;
+    }
+    editorConfig.updateCurrCol(col + 1);
+    write(STDOUT_FILENO, &ch, 1);
 }

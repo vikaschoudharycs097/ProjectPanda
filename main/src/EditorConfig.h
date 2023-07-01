@@ -60,12 +60,12 @@ public:
     void enableRawMode(void);
     void disableRawMode(void);
     
-    // Update Editor confiuration
+    // Update Cursor
+    void updateCursor(void);
     void updateCurrRow(size_t newRow);
     void updateCurrCol(size_t newCol);
-    void updateCursor(void);
-    void moveCursor(int ch, const vector<string>& textRows);
-    void updateCurrentPositionAndCursor(size_t newRow, size_t newCol);
+    void updateCursor(size_t newRow, size_t newCol);
+    void updateCursor(int ch, const vector<string>& textRows);
 };
 
 #endif // EDITOR_CONFIG_H

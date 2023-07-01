@@ -8,8 +8,8 @@
 #ifndef ERROR_H
 #define ERROR_H
 
-enum class Error {
-    WINSIZE_EXTRACT_ERROR = 1;
+enum Error {
+    WINSIZE_EXTRACTION_FAILED = 1
 };
 
 #endif
