@@ -181,6 +181,7 @@ void Editor::insertChar(int ch) {
             handleNewline(ch);
             break;
         case HORIZONTAL_TAB:
+            handleHorizontalTab(ch);
             break;
         default:
             handleIsGraph(ch);
@@ -208,7 +209,26 @@ void Editor::handleNewline(int ch) {
 
 // Handle horizontal tab input
 void Editor::handleHorizontalTab(int ch) {
+    size_t row = editorConfig.getCurrRow();
+    size_t col = editorConfig.getCurrCol();
+    size_t tabLength = editorConfig.getTabLength();
 
+    size_t extra = textRows[row].size() % tabLength;
+    size_t spaces = extra ? tabLength - extra : tabLength;
+    textRows[row].resize(textRows[row].size() + spaces);
+
+    if (col + spaces < textRows.size()) {
+        // Shift characters by 'spaces'
+        for (size_t i = textRows.size() - spaces - 1; i > col; i--) {
+            textRows[row][i + spaces] = textRows[row][i];
+        }
+
+        // Fill with space character
+        for (size_t i = 0; i < spaces; i++) {
+            textRows[row][col + i] = ' ';
+        }
+    }
+    editorConfig.updateCursor(row, col + spaces);
 }
 
 // Handle isgraph character input
