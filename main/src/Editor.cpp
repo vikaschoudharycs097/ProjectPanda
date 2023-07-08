@@ -52,6 +52,9 @@ void Editor::editText(void) {
             case END_KEY:
                 editorConfig.updateCursor(ch, textRows);
                 break;
+            case DELETE:
+                deleteChar();
+                break;
             default:
                 insertChar(ch);
                 break;
@@ -244,4 +247,19 @@ void Editor::handleIsGraph(int ch) {
     }
     editorConfig.updateCurrCol(col + 1);
     write(STDOUT_FILENO, &ch, 1);
+}
+
+// Delete character from current row and re-draw line
+void Editor::deleteChar(void) {
+    size_t row = editorConfig.getCurrRow();
+    size_t col = editorConfig.getCurrCol();
+    size_t size = textRows[row].size();
+    if (col < size) {
+        for (int i = col + 1; i < size; i++) {
+            textRows[row][i-1] = textRows[row][i];
+        }
+        textRows[row].resize(size-1);
+    }
+
+    editorConfig.redraw(textRows[row]);
 }

@@ -175,3 +175,10 @@ void EditorConfig::updateCursor(size_t newRow, size_t newCol) {
     currCol = newCol;
     updateCursor();
 }
+
+// Redraw line
+void EditorConfig::redraw(const string& row) {
+    write(STDOUT_FILENO, "\x1b[2K", 4);
+    write(STDOUT_FILENO, row.c_str(), row.size());
+    updateCursor();
+}

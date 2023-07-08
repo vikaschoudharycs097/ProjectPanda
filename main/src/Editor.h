@@ -36,6 +36,7 @@ private:
     int readKeypress(void);
     void refreshScreen(void);
     void insertChar(int ch);
+    void deleteChar();
     void handleNewline(int ch);
     void handleIsGraph(int ch);
     void handleHorizontalTab(int ch);

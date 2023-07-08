@@ -68,6 +68,9 @@ public:
     void updateCurrCol(size_t newCol);
     void updateCursor(size_t newRow, size_t newCol);
     void updateCursor(int ch, const vector<string>& textRows);
+
+    // Redraw line
+    void redraw(const string& row);
 };
 
 #endif // EDITOR_CONFIG_H
