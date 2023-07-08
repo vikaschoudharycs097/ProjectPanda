@@ -179,6 +179,11 @@ void EditorConfig::updateCursor(size_t newRow, size_t newCol) {
 // Redraw line
 void EditorConfig::redraw(const string& row) {
     write(STDOUT_FILENO, "\x1b[2K", 4);
+    
+    // Store existing cursor position
+    size_t rowPos = currRow;
+    size_t colPos = currCol;
+    updateCursor(rowPos, 0);
     write(STDOUT_FILENO, row.c_str(), row.size());
-    updateCursor();
+    updateCursor(rowPos, colPos);
 }

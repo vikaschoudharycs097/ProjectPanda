@@ -157,19 +157,27 @@ int Editor::readKeypress(void) {
         // Read remaining two bytes of escape sequence
         char seq[3];
         if (read(STDIN_FILENO, seq, 2) == 2 && seq[0] == '[') {
-            switch (seq[1]) {
-                case 'A': return ARROW_UP;
-                case 'B': return ARROW_DOWN;
-                case 'C': return ARROW_RIGHT;
-                case 'D': return ARROW_LEFT;
-                case '1': 
-                case '7':
-                case 'H':
-                    return HOME_KEY;
-                case '4':
-                case '8':
-                case 'F':
-                    return END_KEY;
+            if (seq[1] >= '0' && seq[1] <= '9') {
+                seq[2] = '\0';
+                read(STDIN_FILENO, &seq[2], 1);
+                if (seq[2] == '~') {
+                    switch (seq[1]) {
+                        case '1':
+                        case '7': return HOME_KEY;
+                        case '4':
+                        case '8': return END_KEY;
+                        case '3': return DELETE;
+                    }
+                }
+            } else {
+                switch (seq[1]) {
+                    case 'A': return ARROW_UP;
+                    case 'B': return ARROW_DOWN;
+                    case 'C': return ARROW_RIGHT;
+                    case 'D': return ARROW_LEFT;
+                    case 'H': return HOME_KEY;
+                    case 'F':return END_KEY;
+                }
             }
         } 
     }
@@ -255,11 +263,10 @@ void Editor::deleteChar(void) {
     size_t col = editorConfig.getCurrCol();
     size_t size = textRows[row].size();
     if (col < size) {
-        for (int i = col + 1; i < size; i++) {
-            textRows[row][i-1] = textRows[row][i];
+        for (size_t i = col + 1; i < size; i++) {
+            textRows[row][i - 1] = textRows[row][i];
         }
-        textRows[row].resize(size-1);
+        textRows[row].resize(size - 1);
+        editorConfig.redraw(textRows[row]);
     }
-
-    editorConfig.redraw(textRows[row]);
 }
