@@ -29,6 +29,7 @@ Editor::Editor(const string& fileName): fileName(fileName), currMode(EditorMode:
             getline(file, line);
             textRows.push_back(line);
         }
+        file.close();
     }
 }
 
@@ -143,6 +144,11 @@ char Editor::getCommand(void) {
 
     // Read command
     while ((ch = readKeypress()) != ESC && ch != 'q') {
+        switch (ch) {
+            case 'w':
+                saveText();
+                break;
+        }
     }
     
     return ch;
@@ -268,5 +274,19 @@ void Editor::deleteChar(void) {
         }
         textRows[row].resize(size - 1);
         editorConfig.redraw(textRows[row]);
+    }
+}
+
+// Save text to file
+void Editor::saveText(void) {
+    if (fileName != "") {
+        fstream file(fileName, fstream::out);
+        for (int i = 0, n = textRows.size(); i < n; i++) {
+            file << textRows[i];
+            if (i != n - 1) {
+                file << '\n';
+            }
+        }
+        file.close();
     }
 }

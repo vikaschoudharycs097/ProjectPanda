@@ -35,8 +35,11 @@ private:
     char getCommand(void);
     int readKeypress(void);
     void refreshScreen(void);
+
+    // Text Operation
+    void saveText(void);
     void insertChar(int ch);
-    void deleteChar();
+    void deleteChar(void);
     void handleNewline(int ch);
     void handleIsGraph(int ch);
     void handleHorizontalTab(int ch);
