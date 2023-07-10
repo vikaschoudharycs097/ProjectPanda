@@ -239,11 +239,11 @@ void Editor::handleHorizontalTab(int ch) {
         for (size_t i = textRows.size() - spaces - 1; i > col; i--) {
             textRows[row][i + spaces] = textRows[row][i];
         }
+    }
 
-        // Fill with space character
-        for (size_t i = 0; i < spaces; i++) {
-            textRows[row][col + i] = ' ';
-        }
+    // Fill with space character
+    for (size_t i = 0; i < spaces; i++) {
+        textRows[row][col + i] = ' ';
     }
     editorConfig.updateCursor(row, col + spaces);
 }
