@@ -154,7 +154,7 @@ void EditorConfig::updateCursor(int ch, const vector<string>& textRows) {
             }
             break;
         case ARROW_RIGHT:
-            if (currCol < textRows[currRow].size() - 1) {
+            if (currCol < textRows[currRow].size()) {
                 currCol++;
             }
             break;
