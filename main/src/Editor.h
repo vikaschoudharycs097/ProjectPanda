@@ -30,11 +30,11 @@ private:
 
     // Private member functions
     void editText(void);
-    void drawTildes(void);
     void invertMode(void);
     char getCommand(void);
     int readKeypress(void);
     void refreshScreen(void);
+    void renderScreen(int startRow = 0);
 
     // Text Operation
     void saveText(void);

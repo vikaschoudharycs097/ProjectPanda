@@ -81,11 +81,8 @@ void Editor::start(void) {
     // Enable raw mode
     editorConfig.enableRawMode();
 
-    // Refresh editor screen
-    refreshScreen();
-
     // Draw tildes
-    drawTildes();
+    renderScreen();
 
     // Testing: Update mode to Edit and call textEdit
     do {
@@ -114,28 +111,33 @@ void Editor::refreshScreen(void) {
     write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
-// Draw Tildes in first column
-void Editor::drawTildes(void) {
-    string tildes = "";
+// Render screen in first column
+void Editor::renderScreen(int startRow) {
+    string text = "";
     int n = textRows.size();
-    for (int i = 0; i < n - 1; i++) {
-        tildes += textRows[i] + "\r\n";
+    for (int i = startRow; i < n; i++) {
+        text += textRows[i] + "\r\n";
+        editorConfig.updateCursor(i, 0);
+        write(STDOUT_FILENO, "\x1b[2K", 4);
     }
 
     if (n == 0) {
         // No Tildes in first row
-        tildes = "\r\n";
-    } else {
-        tildes += textRows[n-1] + "\r\n";
+        text = "\r\n";
+        editorConfig.updateCursor(0, 0);
+        write(STDOUT_FILENO, "\x1b[2K", 4);
     }
 
     // Draw Tildes from [n, rows)
     for (int i = n, m = editorConfig.getWindowRows() - 1; i < m; i++) {
-        tildes += "~\r\n";
+        text += "~\r\n";
+        editorConfig.updateCursor(i, 0);
+        write(STDOUT_FILENO, "\x1b[2K", 4);
     }
 
-    // Write tildes in single syscall command
-    write(STDOUT_FILENO, tildes.c_str(), tildes.size());
+    // Write text in single syscall command
+    editorConfig.updateCursor(startRow, 0);
+    write(STDOUT_FILENO, text.c_str(), text.size());
 }
 
 // Get the command
@@ -211,17 +213,14 @@ void Editor::handleNewline(int ch) {
     size_t row = editorConfig.getCurrRow();
     size_t col = editorConfig.getCurrCol();
     textRows.push_back("");
-    editorConfig.updateCursor(row + 1, 0);
-    if (row + 2 == textRows.size()) {
-        write(STDOUT_FILENO, "\x1b[2K", 4);
-    } else {
-        for (size_t i = textRows.size() - 1; i > row + 1; i--) {
-            textRows[i] = textRows[i-1];
-        }
-
-        textRows[row + 1] = textRows[row].substr(col);
-        textRows.resize(col);
+    for (size_t i = textRows.size() - 1; i > row + 1; i--) {
+        textRows[i] = textRows[i-1];
     }
+
+    textRows[row + 1] = textRows[row].substr(col);
+    textRows[row].resize(col);
+    renderScreen(row);
+    editorConfig.updateCursor(row + 1, 0);
 }
 
 // Handle horizontal tab input
