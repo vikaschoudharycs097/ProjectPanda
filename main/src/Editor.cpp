@@ -81,7 +81,7 @@ void Editor::start(void) {
     // Enable raw mode
     editorConfig.enableRawMode();
 
-    // Draw tildes
+    // Draw initial screen
     renderScreen();
 
     // Testing: Update mode to Edit and call textEdit
@@ -118,13 +118,6 @@ void Editor::renderScreen(int startRow) {
     for (int i = startRow; i < n; i++) {
         text += textRows[i] + "\r\n";
         editorConfig.updateCursor(i, 0);
-        write(STDOUT_FILENO, "\x1b[2K", 4);
-    }
-
-    if (n == 0) {
-        // No Tildes in first row
-        text = "\r\n";
-        editorConfig.updateCursor(0, 0);
         write(STDOUT_FILENO, "\x1b[2K", 4);
     }
 
