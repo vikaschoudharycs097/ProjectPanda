@@ -39,7 +39,7 @@ Editor::~Editor() {
 // Read text from STDIN in raw mode
 void Editor::editText(void) {
     int ch = 0;
-
+    
     // Read text
     while ((ch = readKeypress()) != ESC) {
         switch (ch) {
@@ -222,14 +222,14 @@ void Editor::handleHorizontalTab(int ch) {
     size_t col = editorConfig.getCurrCol();
     size_t tabLength = editorConfig.getTabLength();
 
-    size_t extra = textRows[row].size() % tabLength;
-    size_t spaces = extra ? tabLength - extra : tabLength;
-    textRows[row].resize(textRows[row].size() + spaces);
+    size_t spaces = tabLength - col % tabLength;
+    size_t newRowSize = textRows[row].size() + spaces;
+    textRows[row].resize(newRowSize);
 
-    if (col + spaces < textRows.size()) {
+    if (col + spaces < newRowSize) {
         // Shift characters by 'spaces'
-        for (size_t i = textRows.size() - spaces - 1; i > col; i--) {
-            textRows[row][i + spaces] = textRows[row][i];
+        for (size_t i = newRowSize - spaces; i > col; i--) {
+            textRows[row][i + spaces - 1] = textRows[row][i - 1];
         }
     }
 
@@ -237,6 +237,9 @@ void Editor::handleHorizontalTab(int ch) {
     for (size_t i = 0; i < spaces; i++) {
         textRows[row][col + i] = ' ';
     }
+
+    // Redraw line and update cursor position
+    editorConfig.redraw(textRows[row]);
     editorConfig.updateCursor(row, col + spaces);
 }
 
