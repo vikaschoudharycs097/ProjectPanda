@@ -40,6 +40,7 @@ private:
     void saveText(void);
     void insertChar(int ch);
     void deleteChar(void);
+    void deletePreviousChar(void);
     void handleNewline(int ch);
     void handleIsGraph(int ch);
     void handleHorizontalTab(int ch);

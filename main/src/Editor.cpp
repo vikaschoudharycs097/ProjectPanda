@@ -12,9 +12,11 @@
 #include <cctype>
 #include <vector>
 #include <string>
+#include <utility>
 #include <algorithm>
 using std::fstream;
 using std::max;
+using std::move;
 using std::vector;
 using std::string;
 
@@ -55,6 +57,9 @@ void Editor::editText(void) {
                 break;
             case DELETE:
                 deleteChar();
+                break;
+            case BACKSPACE:
+                deletePreviousChar();
                 break;
             default:
                 insertChar(ch);
@@ -269,6 +274,33 @@ void Editor::deleteChar(void) {
         }
         textRows[row].resize(size - 1);
         editorConfig.redraw(textRows[row]);
+    }
+}
+
+// Delete previous character and re-draw line(s)
+void Editor::deletePreviousChar(void) {
+    size_t row = editorConfig.getCurrRow();
+    size_t col = editorConfig.getCurrCol();
+    if (!(row == 0 && col == 0)) {
+        if (col == 0) {
+            size_t sizePreviousRow = textRows[row - 1].size();
+            size_t numOfRows = textRows.size();
+            textRows[row - 1] +=  textRows[row];
+            for (size_t i = row + 1; i < numOfRows; i++) {
+                textRows[i - 1] = move(textRows[i]);
+            }
+            textRows.resize(numOfRows - 1);
+            renderScreen(row - 1);
+            editorConfig.updateCursor(row - 1, sizePreviousRow);
+        } else {
+            size_t size = textRows[row].size();
+            for (size_t i = col; i < size; i++) {
+                textRows[row][i-1] = textRows[row][i];
+            }
+            textRows[row].resize(size - 1);
+            editorConfig.redraw(textRows[row]);
+            editorConfig.updateCursor(row, col - 1);
+        }
     }
 }
 
