@@ -28,7 +28,7 @@ private:
     EditorConfig editorConfig;
     vector<string> textRows;
 
-    // Private member functions
+    // Editor operations
     void editText(void);
     void invertMode(void);
     char getCommand(void);
@@ -36,7 +36,7 @@ private:
     void refreshScreen(void);
     void renderScreen(int startRow = 0);
 
-    // Text Operation
+    // Character Operations
     void saveText(void);
     void insertChar(int ch);
     void deleteChar(void);
@@ -45,9 +45,6 @@ private:
     void handleIsGraph(int ch);
     void handleHorizontalTab(int ch);
 
-    // Static Constants
-    const char ESC = (char) 27;
-
 public:
     Editor();
     Editor(const string& fileName);
@@ -55,4 +52,4 @@ public:
     void start();  // Manages Editor's functionalities
 };
 
-#endif
+#endif // EDITOR_H

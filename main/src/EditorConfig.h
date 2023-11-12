@@ -13,19 +13,6 @@
 using std::string;
 using std::vector;
 
-enum EditorKey {
-    HORIZONTAL_TAB = 9,
-    NEWLINE = 13,
-    BACKSPACE = 127,
-    ARROW_LEFT = 256,
-    ARROW_RIGHT,
-    ARROW_UP,
-    ARROW_DOWN,
-    HOME_KEY,
-    END_KEY,
-    DELETE
-};
-
 class EditorConfig {
 private:
     size_t currRow;

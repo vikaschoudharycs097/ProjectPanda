@@ -5,7 +5,6 @@
  * @date   05/24/2023
  ***********************************************/
 
-#include "Editor.h"
 #include <unistd.h>
 #include <termios.h>
 #include <fstream>
@@ -14,6 +13,9 @@
 #include <string>
 #include <utility>
 #include <algorithm>
+#include "Editor.h"
+#include "SpecialKeys.h"
+
 using std::fstream;
 using std::max;
 using std::move;

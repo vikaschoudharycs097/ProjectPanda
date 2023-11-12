@@ -14,6 +14,8 @@
 #include <sys/ioctl.h>
 #include "Error.h"
 #include "EditorConfig.h"
+#include "SpecialKeys.h"
+
 using std::min;
 using std::max;
 using std::string;
