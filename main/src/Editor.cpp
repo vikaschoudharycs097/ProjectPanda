@@ -260,9 +260,12 @@ void Editor::handleIsGraph(int ch) {
             textRows[row][i] = textRows[row][i - 1];
         }
         textRows[row][col] = ch;
+        editorConfig.updateCurrCol(col + 1);
+        editorConfig.redraw(textRows[row]);
+    } else {
+        editorConfig.updateCurrCol(col + 1);
+        write(STDOUT_FILENO, &ch, 1);
     }
-    editorConfig.updateCurrCol(col + 1);
-    write(STDOUT_FILENO, &ch, 1);
 }
 
 // Delete character from current row and re-draw line
