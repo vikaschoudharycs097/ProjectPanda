@@ -143,13 +143,20 @@ void Editor::renderScreen(int startRow) {
 // Get the command
 char Editor::getCommand(void) {
     char ch = 0;
+    char remaining;
 
     // Read command
-    while ((ch = readKeypress()) != ESC && ch != 'q') {
+    while ((ch = readKeypress()) != ESC) {
+        write(STDOUT_FILENO, &ch, 1);
         switch (ch) {
             case 'w':
                 saveText();
                 break;
+            case 'q':
+                while ((remaining = readKeypress()) != NEWLINE) {
+                    write(STDOUT_FILENO, &remaining, 1);
+                }
+                return ch;
         }
     }
     
