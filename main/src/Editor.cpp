@@ -122,6 +122,7 @@ void Editor::refreshScreen(void) {
 void Editor::renderScreen(int startRow) {
     string text = "";
     int n = textRows.size();
+    int currRow = editorConfig.getCurrRow();
     for (int i = startRow; i < n; i++) {
         text += textRows[i] + "\r\n";
         editorConfig.updateCursor(i, 0);
@@ -138,6 +139,9 @@ void Editor::renderScreen(int startRow) {
     // Write text in single syscall command
     editorConfig.updateCursor(startRow, 0);
     write(STDOUT_FILENO, text.c_str(), text.size());
+
+    // Update cursor to its last position
+    editorConfig.updateCursor(currRow, 0);
 }
 
 // Get the command
@@ -157,6 +161,9 @@ char Editor::getCommand(void) {
                     write(STDOUT_FILENO, &remaining, 1);
                 }
                 return ch;
+            case NEWLINE:
+                editorConfig.clearLine();
+                break;
         }
     }
     

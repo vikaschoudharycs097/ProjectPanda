@@ -189,3 +189,9 @@ void EditorConfig::redraw(const string& row) {
     write(STDOUT_FILENO, row.c_str(), row.size());
     updateCursor(rowPos, colPos);
 }
+
+// Clear the current line
+void EditorConfig::clearLine(void) {
+    write(STDOUT_FILENO, "\x1b[2K", 4);
+    updateCursor(currRow, 0);
+}

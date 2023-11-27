@@ -58,6 +58,9 @@ public:
 
     // Redraw line
     void redraw(const string& row);
+    
+    // Clear the given row(or line)
+    void clearLine(void);
 };
 
 #endif // EDITOR_CONFIG_H
